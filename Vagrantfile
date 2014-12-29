@@ -11,6 +11,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Every Vagrant virtual environment requires a box to build off of.
   config.vm.box = "centos65-x86_64"
+  config.vm.box_url = "https://github.com/2creatives/vagrant-centos/releases/download/v6.5.3/centos65-x86_64-20140116.box"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -77,10 +78,10 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # You will need to create the manifests directory and a manifest in
   # the file default.pp in the manifests_path directory.
   #
-  # config.vm.provision "puppet" do |puppet|
-  #   puppet.manifests_path = "manifests"
-  #   puppet.manifest_file  = "site.pp"
-  # end
+  config.vm.provision "puppet" do |puppet|
+    puppet.manifests_path = "manifests"
+    puppet.manifest_file  = "default.pp"
+  end
 
   # Enable provisioning with chef solo, specifying a cookbooks path, roles
   # path, and data_bags path (all relative to this Vagrantfile), and adding
@@ -119,4 +120,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # chef-validator, unless you changed the configuration.
   #
   #   chef.validation_client_name = "ORGNAME-validator"
+
+  config.vm.provision "shell", inline: <<-EOT
+    yum install -y puppet
+  EOT
 end
