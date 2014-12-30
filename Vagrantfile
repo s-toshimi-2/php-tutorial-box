@@ -123,5 +123,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   config.vm.provision "shell", inline: <<-EOT
     yum install -y puppet
+    rm -rf /var/www/html
+    ln -s /vagrant /var/www/html
   EOT
 end
