@@ -7,6 +7,7 @@ package { 'php':
 }
 
 service { 'httpd':
+    enable  => true,
     ensure  => running,
     require => [
         Package['httpd'],
@@ -14,9 +15,19 @@ service { 'httpd':
     ]
 }
 
-package { 'git':
-    ensure => installed
+service { 'iptables':
+    enable => false,
+    ensure => stopped,
 }
+
+$default_package = [
+    'git',
+    'screen',
+    'tree',
+    'wget',
+    'zsh',
+    'nkf',
+]
 
 $phpenv_package = [
     'gcc',
@@ -33,6 +44,10 @@ $phpenv_package = [
     'libxslt-devel',
     'httpd-devel',
 ]
+
+package { $default_package:
+    ensure => installed
+}
 
 package { $phpenv_package:
     ensure => installed
