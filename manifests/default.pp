@@ -7,12 +7,23 @@ package { 'php':
 }
 
 service { 'httpd':
-    enable  => true,
-    ensure  => running,
+    enable     => true,
+    ensure     => running,
+    hasrestart => true,
+    require    => File['/etc/httpd/conf/httpd.conf']
+}
+
+file { '/etc/httpd/conf/httpd.conf':
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('httpd.conf'),
     require => [
         Package['httpd'],
         Package['php'],
-    ]
+    ],
+    notify => Service['httpd'],
 }
 
 service { 'iptables':
