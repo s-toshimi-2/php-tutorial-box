@@ -1,36 +1,3 @@
-package { 'httpd':
-    ensure => installed
-}
-
-package { 'php':
-    ensure => installed
-}
-
-service { 'httpd':
-    enable     => true,
-    ensure     => running,
-    hasrestart => true,
-    require    => File['/etc/httpd/conf/httpd.conf']
-}
-
-file { '/etc/httpd/conf/httpd.conf':
-    ensure  => present,
-    owner   => 'root',
-    group   => 'root',
-    mode    => '0644',
-    content => template('httpd.conf'),
-    require => [
-        Package['httpd'],
-        Package['php'],
-    ],
-    notify => Service['httpd'],
-}
-
-service { 'iptables':
-    enable => false,
-    ensure => stopped,
-}
-
 $default_package = [
     'git',
     'screen',
@@ -54,6 +21,7 @@ $phpenv_package = [
     'libtidy-devel',
     'libxslt-devel',
     'httpd-devel',
+    'php-xml',
 ]
 
 package { $default_package:
@@ -63,3 +31,54 @@ package { $default_package:
 package { $phpenv_package:
     ensure => installed
 }
+
+package { 'httpd':
+    ensure => installed
+}
+
+package { 'php':
+    ensure => installed
+}
+
+file { '/etc/httpd/conf/httpd.conf':
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('httpd.conf'),
+    require => [
+        Package['httpd'],
+        Package['php'],
+    ],
+    notify => Service['httpd'],
+}
+
+file { '/var/www/html':
+    ensure  => link,
+    target  => '/vagrant',
+    require => Exec['rm -rf /var/www/html'],
+}
+
+exec { 'rm -rf /var/www/html':
+    user => 'root',
+    path => [
+        '/usr/bin',
+        '/usr/sbin',
+        '/bin',
+        '/sbin',
+    ],
+    require => Package['httpd'],
+}
+
+service { 'httpd':
+    enable     => true,
+    ensure     => running,
+    hasrestart => true,
+    require    => File['/etc/httpd/conf/httpd.conf']
+}
+
+service { 'iptables':
+    enable => false,
+    ensure => stopped,
+}
+
