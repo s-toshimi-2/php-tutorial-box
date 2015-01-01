@@ -1,8 +1,11 @@
+PHP=$(shell which php)
+CURL=$(shell which curl)
+
 setup:
-	/vagrant/create_phpenv.sh
+	/vagrant/scripts/create_phpenv.sh
 
 composer.phar:
-	curl -s http://getcomposer.org/installer | php
+	$(CURL) -s http://getcomposer.org/installer | $(PHP)
 
 install: composer.phar
-	php /vagrant/composer.phar install
+	$(PHP) /vagrant/composer.phar install
