@@ -40,6 +40,19 @@ package { 'php':
     ensure => installed
 }
 
+package { 'mongodb-org':
+    ensure => installed,
+    require => File['/etc/yum.repos.d/mongodb.repo'],
+}
+
+file { '/etc/yum.repos.d/mongodb.repo':
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('mongodb.repo'),
+}
+
 file { '/etc/httpd/conf/httpd.conf':
     ensure  => present,
     owner   => 'root',
