@@ -41,8 +41,19 @@ package { 'php':
 }
 
 package { 'mongodb-org':
-    ensure => installed,
+    ensure  => installed,
     require => File['/etc/yum.repos.d/mongodb.repo'],
+}
+
+package { 'mysql-community-release':
+    provider => 'rpm',
+    ensure   => installed,
+    source   => 'http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm'
+}
+
+package { 'mysql-community-server':
+    ensure  => installed,
+    require => Package['mysql-community-release']
 }
 
 file { '/etc/yum.repos.d/mongodb.repo':
@@ -51,6 +62,16 @@ file { '/etc/yum.repos.d/mongodb.repo':
     group   => 'root',
     mode    => '0644',
     content => template('mongodb.repo'),
+}
+
+file { '/etc/my.cnf':
+    ensure  => present,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template('my.cnf'),
+    require => Package['mysql-community-server'],
+    notify  => Service['mysqld'],
 }
 
 file { '/etc/httpd/conf/httpd.conf':
@@ -93,5 +114,12 @@ service { 'httpd':
 service { 'iptables':
     enable => false,
     ensure => stopped,
+}
+
+service { 'mysqld':
+    enable     => true,
+    ensure     => running,
+    hasrestart => true,
+    require    => File['/etc/my.cnf']
 }
 
