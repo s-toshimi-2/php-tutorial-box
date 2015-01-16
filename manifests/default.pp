@@ -45,6 +45,17 @@ package { 'mongodb-org':
     require => File['/etc/yum.repos.d/mongodb.repo'],
 }
 
+package { 'mysql-community-release':
+    provider => 'rpm',
+    ensure   => installed,
+    source   => 'http://dev.mysql.com/get/mysql-community-release-el6-5.noarch.rpm'
+}
+
+package { 'mysql-community-server':
+    ensure  => installed,
+    require => Package['mysql-community-release']
+}
+
 file { '/etc/yum.repos.d/mongodb.repo':
     ensure  => present,
     owner   => 'root',
@@ -93,5 +104,11 @@ service { 'httpd':
 service { 'iptables':
     enable => false,
     ensure => stopped,
+}
+
+service { 'mysqld':
+    enable     => true,
+    ensure     => running,
+    hasrestart => true
 }
 
