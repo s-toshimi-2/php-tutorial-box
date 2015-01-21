@@ -9,3 +9,7 @@ composer.phar:
 
 install: composer.phar
 	$(PHP) /vagrant/composer.phar install
+
+switch_php:
+	phpenv global $(VERSION)
+	phpenv apache-version $(VERSION)
