@@ -1,4 +1,10 @@
 class phpenv::install {
+    package { 'epel-release':
+        provider => 'rpm',
+        ensure   => installed,
+        source   => 'http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm'
+    }
+
     $packages = [
         'gcc',
         'bison',
@@ -8,6 +14,7 @@ class phpenv::install {
         'libcurl-devel',
         'libjpeg-turbo-devel',
         'libpng-devel',
+        'libmcrypt-devel',
         'readline-devel',
         'libtidy-devel',
         'libxslt-devel',

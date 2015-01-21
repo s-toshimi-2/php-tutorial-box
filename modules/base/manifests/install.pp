@@ -6,6 +6,7 @@ class base::install {
         'tree',
         'wget',
         'zsh',
+        'patch',
     ]
 
     package { $packages :
